@@ -23,6 +23,7 @@ E[ChromaDB Vector Store]
 F[Streamlit User Interface]
 G[RAG Retriever]
 H[Groq LLM API gpt-oss-20b]
+I[Evaluation Suite evaluate.py]
 
 A --> B
 B --> C
@@ -32,6 +33,8 @@ F --> G
 G --> E
 G --> H
 H --> F
+I --> G
+I --> H
 ```
 
 ---
@@ -49,6 +52,7 @@ H --> F
 | 7 | Prompt Generation | LangChain / Python | Combine context and enforce strict output formatting |
 | 8 | LLM Inference | Groq API (gpt-oss-20b) | Generate complete, un-truncated recipe output |
 | 9 | Frontend UI | Streamlit | Provide a modern chat interface with custom styling |
+| 10 | RAG Evaluation | Custom Python Script | Evaluate groundedness across 25 diverse test queries |
 
 ---
 
@@ -56,7 +60,7 @@ H --> F
 
 When users look up recipes online or query standard language models, they frequently encounter hallucinations, incorrect ingredient proportions, or unstructured answers. In culinary applications, incorrect measurements or steps can ruin a dish entirely.
 
-This project demonstrates how a RAG pipeline bridges the gap between natural language interaction and verified documentation, dynamically fetching exact paragraphs from source cookbooks at runtime to ensure 100% factual accuracy and source transparency.
+This project demonstrates how a RAG pipeline bridges the gap between natural language interaction and verified documentation, dynamically fetching exact paragraphs from source cookbooks at runtime to ensure 100% factual accuracy, source transparency, and rigorous evaluation tracking.
 
 ---
 
@@ -69,6 +73,7 @@ The project follows a modular RAG architecture divided into distinct data ingest
 | Ingestion & Chunking | Extract raw text from PDFs and split into optimized segments |
 | Embedding & Storage | Vectorize text chunks and store persistently in local vector database |
 | Retrieval & Generation | Perform semantic similarity search and synthesize responses via LLM |
+| Evaluation Pipeline | Test retrieval and generation groundedness across a standardized query test set |
 
 ---
 
@@ -129,6 +134,23 @@ The generation layer combines retrieved cookbook context with strict prompting t
 
 ---
 
+# LLM Evaluation Framework
+To satisfy modern job description requirements for LLM evaluation, this project includes a dedicated automated evaluation pipeline (evaluate.py) that tests the RAG application against a curated test suite of 25 diverse questions.
+
+## Test Dataset Breakdown
+- Direct Retrieval (10 Questions): Tests exact factual lookup from single chunks (e.g., baking temperatures, ingredient weights, specific cooking times).
+
+- Multi-Chunk Synthesis (8 Questions): Tests the system's ability to combine information across disparate sections (e.g., multi-step pizza dough or chicken biryani instructions).
+
+- Negative / Out-of-Domain Tests (7 Questions): Tests hallucination resistance against ungrounded queries or missing recipes (e.g., asking for unsafe substitutions or non-existent dishes).
+
+## Evaluation Metrics
+- Groundedness / Faithfulness: Measures whether generated claims are strictly supported by the retrieved context chunks, preventing ungrounded fabrications.
+
+- Artifact Output: Results are serialized into evaluation_results.json for performance tracking and auditing.
+
+---
+
 # Technology Stack
 
 | Category | Technology |
@@ -141,6 +163,7 @@ The generation layer combines retrieved cookbook context with strict prompting t
 | Vector Database | ChromaDB |
 | PDF Document Loader | PyMuPDF (`pymupdf`) |
 | Large Language Model | Groq API (`openai/gpt-oss-20b`) |
+| Evaluation & Testing | Custom Python evaluation script (`evaluate.py`) |
 | Environment Configuration | python-dotenv |
 
 ---
@@ -156,6 +179,8 @@ rag-cooking-assistant/
 │
 ├── rag_project_impl.py     # Core RAG pipeline, Embedding Manager, and Retriever logic
 ├── UI.py                   # Streamlit frontend chat interface with custom CSS
+├── evaluate.py             # Automated RAG evaluation script (25 test cases)
+├── evaluation_results.json # Serialized evaluation outputs and metrics artifact
 ├── setup.py                # Project directory structure helper script
 ├── Requirements.txt        # Python module dependencies
 ├── .env                    # Environment variables (Groq API key)
@@ -185,7 +210,7 @@ Prompt Assembly & Template Construction
 LLM Inference (Groq API - gpt-oss-20b)
               │
               ▼
-Structured Response Rendering (Streamlit Frontend)
+Structured Response Rendering (Streamlit Frontend) / Result Logging (JSON)
 ```
 
 ---
@@ -200,6 +225,7 @@ Structured Response Rendering (Streamlit Frontend)
 | Store | Save vectors, plain text, and unique chunk IDs into ChromaDB |
 | Retrieve | Query vector store with embedded user questions to fetch context |
 | Generate | Prompt Groq LLM with context to output structured recipes |
+| Evaluate | Run automated test suite across 25 questions to score groundedness |
 
 ---
 
@@ -255,6 +281,7 @@ Security and best practices are implemented across the application design.
 - Persistent Local Vector Storage
 - Context-Aware Prompt Engineering
 - High-Performance Groq LLM Integration
+- Automated RAG Evaluation Script (evaluate.py)
 - Custom Streamlit Chat Interface
 - Modular Python Class Architecture
 - Scalable and Maintainable Design
@@ -291,8 +318,9 @@ pip install -r Requirements.txt
 | 2 | Create `.env` file and add your `GROQ_API_KEY` |
 | 3 | Place cookbook PDF files into `data/pdf_documents/` |
 | 4 | Run environment setup script or initialize app |
-| 5 | Launch Streamlit web interface (`streamlit run UI.py`) |
-| 6 | Type cooking questions into the interactive chat box |
+| 5 | Run RAG Evaluation Suite: execute python evaluate.py to test generation groundedness across 25 queries |
+| 6 | Launch Streamlit web interface (`streamlit run UI.py`) |
+| 7 | Type cooking questions into the interactive chat box |
 
 ---
 
