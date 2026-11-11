@@ -157,7 +157,7 @@ To satisfy modern job description requirements for LLM evaluation, this project 
 |------------|----------------|
 | Programming Language | Python |
 | Frontend Framework | Streamlit |
-| Custom Styling | HTML / CSS (Gemini-style layout) |
+| Custom Styling | HTML / CSS (Chat conversation-style layout) |
 | Orchestration Framework | LangChain, LangChain-Community, LangChain-Groq |
 | Embedding Model | Sentence Transformers (`all-MiniLM-L6-v2`) |
 | Vector Database | ChromaDB |
